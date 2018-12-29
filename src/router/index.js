@@ -7,6 +7,7 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* Router Modules */
+import financingRouter from './modules/financing'
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
@@ -89,6 +90,19 @@ export const constantRouterMap = [
     ]
   },
   {
+    path: '/helloworld',
+    component: Layout,
+    redirect: '/helloworld/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/helloworld/index'),
+        name: 'HelloWorld',
+        meta: { title: 'HelloWorld', icon: 'helloworld', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/guide',
     component: Layout,
     redirect: '/guide/index',
@@ -106,6 +120,7 @@ export const constantRouterMap = [
 export default new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
+  mode: 'history',
   routes: constantRouterMap
 })
 
@@ -156,6 +171,7 @@ export const asyncRouterMap = [
   },
 
   /** When your routing table is too long, you can split it into small modules**/
+  financingRouter,
   componentsRouter,
   chartsRouter,
   nestedRouter,
