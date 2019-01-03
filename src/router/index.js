@@ -77,6 +77,7 @@ export const constantRouterMap = [
       }
     ]
   },
+  financingRouter,
   {
     path: '/documentation',
     component: Layout,
@@ -87,19 +88,6 @@ export const constantRouterMap = [
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
         meta: { title: 'documentation', icon: 'documentation', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/helloworld',
-    component: Layout,
-    redirect: '/helloworld/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/helloworld/index'),
-        name: 'HelloWorld',
-        meta: { title: 'HelloWorld', icon: 'helloworld', noCache: true }
       }
     ]
   },
@@ -172,7 +160,6 @@ export const asyncRouterMap = [
   },
 
   /** When your routing table is too long, you can split it into small modules**/
-  financingRouter,
   componentsRouter,
   chartsRouter,
   nestedRouter,

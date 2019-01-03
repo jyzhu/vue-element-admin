@@ -15,6 +15,10 @@ const getters = {
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
   errorLogs: state => state.errorLog.logs,
-  capital: state => state.account.capital
+  // 理财模块
+  capital: state => state.account.capital,
+  asset: state => state.account.asset,
+  ratio: state => state.account.ratio
+
 }
 export default getters
