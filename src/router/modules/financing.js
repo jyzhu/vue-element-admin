@@ -21,6 +21,32 @@ const financingRouter = {
       component: () => import('@/views/financing/asset/index'),
       name: 'Asset',
       meta: { title: '资产', icon: 'target' }
+    },
+    {
+      path: 'fixedIncome',
+      component: () => import('@/views/financing/fixedincome/index'),
+      name: 'fixedIncome',
+      meta: { title: '固定收益类资产', icon: 'target' }
+    },
+    {
+      path: 'fixedIncome/details/:id',
+      component: () => import('@/views/financing/fixedincome/receivePaymentDetails'),
+      name: 'ReceivePaymentDetails',
+      meta: { title: '固定收益类资产详情', icon: 'target' },
+      hidden: true
+    },
+    {
+      path: 'fund',
+      component: () => import('@/views/financing/fund/index'),
+      name: 'fund',
+      meta: { title: '权益类资产', icon: 'target' }
+    },
+    {
+      path: 'fund/details/:id',
+      component: () => import('@/views/financing/fund/fundInvestmentDetails'),
+      name: 'FundInvestmentDetails',
+      meta: { title: '固定收益类资产详情', icon: 'target' },
+      hidden: true
     }
   ]
 }

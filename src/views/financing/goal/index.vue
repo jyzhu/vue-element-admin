@@ -4,17 +4,17 @@
       <el-row :gutter="0">
         <div class="chart-wrapper">
           <label class="label" for="capitalInput">本金:
-            <el-input-number v-model="capitalInput" name="capitalInput" step="500"/>
+            <el-input-number v-model="capitalInput" :step="500" name="capitalInput"/>
           </label>
           <p/>
           <label class="label" for="assetRadioCashInput">现金类:
-            <el-input-number v-model="assetRadioCashInput" name="assetRadioCashInput" step="0.01"/>
+            <el-input-number v-model="assetRadioCashInput" :step="0.01" name="assetRadioCashInput"/>
           </label>
           <label class="label" for="assetRadioFixedInput">固收类:
-            <el-input-number v-model="assetRadioFixedInput" name="assetRadioFixedInput" step="0.01"/>
+            <el-input-number v-model="assetRadioFixedInput" :step="0.01" name="assetRadioFixedInput"/>
           </label>
           <label class="label" for="assetRadioEquityInput">权益类:
-            <el-input-number v-model="assetRadioEquityInput" name="assetRadioEquityInput" step="0.01"/>
+            <el-input-number v-model="assetRadioEquityInput" :step="0.01" name="assetRadioEquityInput"/>
           </label>
 
           <button class="calcBtn example-btn" @click="calculate">计算</button>
