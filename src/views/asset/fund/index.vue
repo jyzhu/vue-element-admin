@@ -5,6 +5,8 @@
     </div>
     <el-table
       :data="tableData"
+      stripe
+      height="500"
       style="width: 100%">
       <el-table-column
         prop="id"
@@ -31,30 +33,26 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="产品名称" prop="productName">
-          <el-input v-model="temp.productName" />
+        <el-form-item label="基金代码" prop="fundCode">
+          <el-select v-model="temp.fundCode" filterable placeholder="请选择">
+            <el-option
+              v-for="item in fundOptions"
+              :key="item.fundCode"
+              :label="item.fundName"
+              :value="item.fundCode"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="确认日期" prop="confirmedDate">
+          <el-date-picker v-model="temp.confirmedDate" type="date" placeholder="Please pick a date"/>
+        </el-form-item>
+        <el-form-item label="申购净值" prop="netValue">
+          <el-input v-model="temp.netValue" />
+        </el-form-item>
+        <el-form-item label="申购费率" prop="costRate">
+          <el-input-number v-model="temp.costRate" :step="0.0000" />
         </el-form-item>
         <el-form-item label="本金" prop="capital">
-          <el-input-number v-model="temp.capital" :step="500" />
-        </el-form-item>
-        <el-form-item label="期望利率" prop="interestRate">
-          <el-input-number v-model="temp.interestRate" :step="0.0001"/>
-        </el-form-item>
-        <el-form-item label="期限" prop="term">
-          <el-input-number v-model="temp.term" :step="1"/>
-          <el-radio-group v-model="temp.dateDimension">
-            <el-radio-button label="DAY">日</el-radio-button>
-            <el-radio-button label="MONTH">月</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="起息日期" prop="effectiveDate">
-          <el-date-picker v-model="temp.effectiveDate" type="date" placeholder="Please pick a date"/>
-        </el-form-item>
-        <el-form-item label="申购日期" prop="boughtDate">
-          <el-date-picker v-model="temp.boughtDate" type="date" placeholder="Please pick a date"/>
-        </el-form-item>
-        <el-form-item label="结束日期" prop="endDate">
-          <el-date-picker v-model="temp.endDate" type="date" placeholder="Please pick a date"/>
+          <el-input-number v-model="temp.capital" :step="10" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -68,7 +66,7 @@
 </template>
 
 <script>
-import { listAllFundInvestmentRecords, createFixedIncomeRecord, updateFixedIncomeRecord } from '@/api/financing'
+import { listAllFundInvestmentRecords, createFundInvestmentTradeLog, listAllFunds } from '@/api/financing'
 
 export default {
   data() {
@@ -83,27 +81,23 @@ export default {
       },
       temp: {
         id: undefined,
-        productName: '',
-        capital: '',
-        interestRate: '',
-        term: '',
-        dateDimension: 'DAY',
-        receivePaymentType: 'AVERAGE_CAPITAL_PLUS_INTEREST',
-        effectiveDate: '',
-        boughtDate: '',
-        endDate: ''
+        fundCode: '',
+        confirmedDate: '',
+        netValue: '',
+        costRate: '',
+        capital: ''
       },
+      fundOptions: [],
       rules: {
-        productName: [{ required: true, message: 'name is required', trigger: 'blur' }],
+        fundCode: [{ required: true, message: 'name is required', trigger: 'blur' }],
         capital: [{ required: true, message: 'capital is required', trigger: 'blur' }],
-        interestRate: [{ required: true, message: 'interest rate is required', trigger: 'blur' }],
-        term: [{ required: true, message: 'term is required', trigger: 'blur' }],
-        effectiveDate: [{ type: 'date', required: true, message: 'effective date is required', trigger: 'change' }]
+        costRate: [{ required: true, message: 'cost rate is required', trigger: 'blur' }],
+        confirmedDate: [{ type: 'date', required: true, message: 'confirmed date is required', trigger: 'change' }]
       }
     }
   },
   mounted() {
-    this.getTableData()
+    this.getTableData().then(this.getAllFunds)
   },
   methods: {
     getTableData: function() {
@@ -114,18 +108,22 @@ export default {
         })
       })
     },
+    getAllFunds: function() {
+      return new Promise((resolve) => {
+        listAllFunds().then(data => {
+          this.fundOptions = data.data
+          resolve()
+        })
+      })
+    },
     resetTemp() {
       this.temp = {
         id: undefined,
-        productName: '',
-        capital: '',
-        interestRate: '',
-        term: '',
-        dateDimension: 'DAY',
-        receivePaymentType: 'AVERAGE_CAPITAL_PLUS_INTEREST',
-        effectiveDate: '',
-        boughtDate: '',
-        endDate: ''
+        fundCode: '',
+        confirmedDate: '',
+        netValue: '',
+        costRate: '',
+        capital: ''
       }
     },
     handleCreate: function() {
@@ -138,28 +136,12 @@ export default {
     createData: function() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createFixedIncomeRecord(this.temp).then(() => {
+          debugger
+          createFundInvestmentTradeLog(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
               message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-            this.getTableData()
-          })
-        }
-      })
-    },
-
-    updateData: function() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          updateFixedIncomeRecord(this.temp).then(() => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
               type: 'success',
               duration: 2000
             })
@@ -179,7 +161,7 @@ export default {
       debugger
       console.log(row.id)
       this.$router.push({
-        path: '/financing/fund/details/' + row.id
+        path: '/asset/fund/details/' + row.id
       })
     },
 

@@ -1,43 +1,35 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      {{ message }} {{ totalMoney | numFilter }}
-    </div>
+    <div class="filter-container"/>
     <el-table
       :data="tableData"
+      stripe
+      height="500"
       style="width: 100%">
       <el-table-column
         prop="id"
         label="序号"
         width="50" />
       <el-table-column
-        prop="investmentRecord.fundCode"
-        label="基金编码"
-        width="100" />
-      <el-table-column
-        prop="confirmedDate"
-        label="确认日期"
-        width="100" />
+        prop="receivedDate"
+        label="收款日"
+        width="180" />
       <el-table-column
         prop="capital"
         label="本金"
         width="100" />
       <el-table-column
-        prop="netValue"
-        label="净值" />
+        prop="interest"
+        label="利息" />
       <el-table-column
-        prop="costRate"
-        label="费率" />
-      <el-table-column
-        prop="costValue"
-        label="申购费" />
-      <el-table-column
-        prop="shares"
-        label="份额" />
+        :formatter="formatterStatus"
+        prop="status"
+        label="状态" />
       <el-table-column
         label="操作" >
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(scope.row)"/>
+          <el-button type="primary" icon="el-icon-delete" circle @click="handleDelete(scope.row)"/>
         </template>
       </el-table-column>
     </el-table>
@@ -72,7 +64,7 @@
 </template>
 
 <script>
-import { listAllFundInvestmentTradeLog } from '@/api/financing'
+import { listReceivedPaymentDetails, deleteReceivedPaymentTradeLog } from '@/api/financing'
 
 const receivedStatus = [
   { key: 'NOT_RECEIVED', display_name: '未收' },
@@ -80,7 +72,7 @@ const receivedStatus = [
 ]
 
 export default {
-  name: 'FundInvestmentDetails',
+  name: 'ReceivePaymentDetails',
   filters: {
     numFilter(value) {
       debugger
@@ -118,9 +110,8 @@ export default {
   methods: {
     getTableData: function() {
       return new Promise((resolve) => {
-        debugger
         const id = this.$route.params && this.$route.params.id
-        listAllFundInvestmentTradeLog(id).then(data => {
+        listReceivedPaymentDetails(id).then(data => {
           this.tableData = data.data
           resolve()
         })
@@ -152,6 +143,17 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
     },
 
+    handleDelete: function(row) {
+      this.message = this.message.split('').reverse().join('')
+      return new Promise((resolve) => {
+        deleteReceivedPaymentTradeLog(row.id).then(data => {
+          debugger
+          this.getTableData()
+          resolve()
+        })
+      })
+    },
+
     formatterStatus(row, column) {
       if (row[column.property] === 'NOT_RECEIVED') {
         return '未收'
@@ -163,6 +165,12 @@ export default {
     formatterNumber(row, column) {
       const realVal = parseFloat(row[column.property]).toFixed(2)
       return parseFloat(realVal)
+    },
+
+    formatterPercentage(row, column) {
+      if (row[column.property]) {
+        return row[column.property] * 100 + '%'
+      }
     }
   }
 }

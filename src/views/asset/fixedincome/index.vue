@@ -1,44 +1,72 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <panel-group/>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> {{ message }}
     </div>
     <el-table
       :data="tableData"
+      stripe
+      height="500"
       style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="产品名称">
+              <span>{{ props.row.productName }}</span>
+            </el-form-item>
+            <el-form-item label="申购日期">
+              <span>{{ props.row.boughtDate }}</span>
+            </el-form-item>
+            <el-form-item label="起息日期">
+              <span>{{ props.row.effectiveDate }}</span>
+            </el-form-item>
+            <el-form-item label="结束日期">
+              <span>{{ props.row.endDate }}</span>
+            </el-form-item>
+            <el-form-item label="期限">
+              <span>{{ props.row.term }}</span>
+            </el-form-item>
+            <el-form-item label="待收利息">
+              <span>{{ props.row.unreceivedInterest }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="id"
         label="序号"
         width="50" />
       <el-table-column
         prop="productName"
-        label="产品名称"
-        width="180" />
+        label="产品名称"/>
       <el-table-column
         prop="capital"
-        label="本金"
-        width="100" />
+        label="本金"/>
       <el-table-column
         :formatter="formatterPercentage"
         prop="interestRate"
         label="预期利率" />
       <el-table-column
-        prop="term"
-        label="期限" />
+        prop="receivedCapital"
+        label="已收本金"/>
       <el-table-column
-        prop="effectiveDate"
-        label="起息日期" />
+        prop="receivedInterest"
+        label="已收利息"/>
       <el-table-column
-        prop="boughtDate"
-        label="申购日期" />
+        prop="unreceivedCapital"
+        label="待收本金"/>
       <el-table-column
-        prop="endDate"
-        label="结束日期" />
+        :formatter="formatterPercentage"
+        prop="xirr"
+        label="XIRR"/>
       <el-table-column
-        label="操作" >
+        label="操作"
+        width="180">
         <template slot-scope="scope">
           <el-button type="primary" icon="el-icon-info" circle @click="getDetail(scope.row)"/>
           <el-button type="primary" icon="el-icon-edit" circle @click="handleUpdate(scope.row)"/>
+          <el-button type="primary" icon="el-icon-delete" circle @click="handleDelete(scope.row)"/>
         </template>
       </el-table-column>
     </el-table>
@@ -90,7 +118,9 @@
 </template>
 
 <script>
-import { listFixedIncomeRecords, createFixedIncomeRecord, updateFixedIncomeRecord } from '@/api/financing'
+import { listFixedIncomeRecords, createFixedIncomeRecord, updateFixedIncomeRecord, deleteFixedIncomeRecord } from '@/api/financing'
+import PanelGroup from './components/PanelGroup'
+import ProgressBar from './components/ProgressBar'
 
 const receivePaymentTypeOptions = [
   { key: 'REPAYMENT_PRINCIPAL_INTEREST', display_name: '到期还本付息' },
@@ -100,6 +130,9 @@ const receivePaymentTypeOptions = [
 ]
 
 export default {
+  components: {
+    PanelGroup, ProgressBar
+  },
   data() {
     return {
       message: 'Hello Vue.js!',
@@ -199,6 +232,17 @@ export default {
       })
     },
 
+    handleDelete: function(row) {
+      this.message = this.message.split('').reverse().join('')
+      return new Promise((resolve) => {
+        deleteFixedIncomeRecord(row.id).then(data => {
+          debugger
+          this.getTableData()
+          resolve()
+        })
+      })
+    },
+
     handleUpdate: function(row) {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -207,13 +251,14 @@ export default {
 
     getDetail(row) {
       this.$router.push({
-        path: '/financing/fixedIncome/details/' + row.id
+        path: '/asset/fixedIncome/details/' + row.id
       })
     },
 
     formatterPercentage(row, column) {
-      if (row.interestRate) {
-        return row.interestRate * 100 + '%'
+      if (row[column.property]) {
+        const realVal = parseFloat(row[column.property] * 100).toFixed(2)
+        return realVal + '%'
       }
     }
   }
@@ -221,4 +266,16 @@ export default {
 </script>
 
 <style scoped>
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
 </style>

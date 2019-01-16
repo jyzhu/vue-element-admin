@@ -5,26 +5,39 @@
     </div>
     <el-table
       :data="tableData"
+      stripe
+      height="500"
       style="width: 100%">
       <el-table-column
         prop="id"
         label="序号"
         width="50" />
       <el-table-column
-        prop="receivedDate"
-        label="收款日"
-        width="180" />
+        prop="investmentRecord.fundCode"
+        label="基金编码"
+        width="100" />
+      <el-table-column
+        prop="confirmedDate"
+        label="确认日期"
+        width="100" />
       <el-table-column
         prop="capital"
         label="本金"
         width="100" />
       <el-table-column
-        prop="interest"
-        label="利息" />
+        prop="netValue"
+        label="净值" />
       <el-table-column
-        :formatter="formatterStatus"
-        prop="status"
-        label="状态" />
+        :formatter="formatterPercentage"
+        prop="costRate"
+        label="费率" />
+      <el-table-column
+        :formatter="formatterNumber"
+        prop="costValue"
+        label="申购费" />
+      <el-table-column
+        prop="shares"
+        label="份额" />
       <el-table-column
         label="操作" >
         <template slot-scope="scope">
@@ -63,7 +76,7 @@
 </template>
 
 <script>
-import { listReceivedPaymentDetails } from '@/api/financing'
+import { listAllFundInvestmentTradeLog } from '@/api/financing'
 
 const receivedStatus = [
   { key: 'NOT_RECEIVED', display_name: '未收' },
@@ -71,7 +84,8 @@ const receivedStatus = [
 ]
 
 export default {
-  name: 'ReceivePaymentDetails',
+
+  name: 'FundInvestmentDetails',
   filters: {
     numFilter(value) {
       debugger
@@ -109,8 +123,9 @@ export default {
   methods: {
     getTableData: function() {
       return new Promise((resolve) => {
+        debugger
         const id = this.$route.params && this.$route.params.id
-        listReceivedPaymentDetails(id).then(data => {
+        listAllFundInvestmentTradeLog(id).then(data => {
           this.tableData = data.data
           resolve()
         })
@@ -153,6 +168,12 @@ export default {
     formatterNumber(row, column) {
       const realVal = parseFloat(row[column.property]).toFixed(2)
       return parseFloat(realVal)
+    },
+
+    formatterPercentage(row, column) {
+      if (row[column.property]) {
+        return row[column.property] * 100 + '%'
+      }
     }
   }
 }

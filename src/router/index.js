@@ -7,7 +7,8 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* Router Modules */
-import financingRouter from './modules/financing'
+import planRouter from './modules/plan'
+import assetRouter from './modules/asset'
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
@@ -77,20 +78,8 @@ export const constantRouterMap = [
       }
     ]
   },
-  financingRouter,
-  {
-    path: '/documentation',
-    component: Layout,
-    redirect: '/documentation/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation', noCache: true }
-      }
-    ]
-  },
+  planRouter,
+  assetRouter,
   {
     path: '/guide',
     component: Layout,

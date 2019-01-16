@@ -3,6 +3,7 @@
     <div class="filter-container">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> {{ message }}
     </div>
+    <custom-table :table-data="tableData" :table-meta="tableMeta"/>
     <el-table
       :data="tableData"
       style="width: 100%">
@@ -52,8 +53,10 @@
 
 <script>
 import { getTradeLog, createTradeLog, updateTradeLog } from '@/api/financing'
+import CustomTable from '@/components/table/CustomTable'
 
 export default {
+  components: { CustomTable },
   data() {
     return {
       message: 'Hello Vue.js!',
@@ -78,6 +81,12 @@ export default {
       //   name: '王小虎',
       //   address: '上海市普陀区金沙江路 1516 弄'
       // }],
+      tableMeta: [
+        { prop: 'id', label: '序号', widthStyle: '50' },
+        { prop: 'tradeDate', label: '日期', widthStyle: '180' },
+        { prop: 'name', label: '姓名', widthStyle: '180' },
+        { prop: 'address', label: '地址', widthStyle: '250' }
+      ],
       tableData: [],
       dialogFormVisible: false,
       dialogStatus: '',

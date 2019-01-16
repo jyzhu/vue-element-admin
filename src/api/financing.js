@@ -7,6 +7,13 @@ export function listFixedIncomeRecords() {
   })
 }
 
+export function getFixedIncomeSummary() {
+  return request({
+    url: '/fixedincome/summary',
+    method: 'get'
+  })
+}
+
 export function createFixedIncomeRecord(data) {
   return request({
     url: '/fixedincome/add',
@@ -23,10 +30,24 @@ export function updateFixedIncomeRecord(data) {
   })
 }
 
+export function deleteFixedIncomeRecord(id) {
+  return request({
+    url: '/fixedincome/' + id,
+    method: 'delete'
+  })
+}
+
 export function listReceivedPaymentDetails(id) {
   return request({
-    url: '/fixedincome/listReceivedPaymentDetails/' + id,
+    url: '/fixedincome/receivedPayment/' + id,
     method: 'get'
+  })
+}
+
+export function deleteReceivedPaymentTradeLog(id) {
+  return request({
+    url: '/fixedincome/receivedPayment/' + id,
+    method: 'delete'
   })
 }
 
@@ -71,6 +92,15 @@ export function listAllFundInvestmentTradeLog(id) {
   return request({
     url: '/fund/listAllFundInvestmentTradeLog/' + id,
     method: 'get'
+  })
+}
+
+export function createFundInvestmentTradeLog(data) {
+  debugger
+  return request({
+    url: '/fund/investmentRecord/trade/add',
+    method: 'post',
+    data
   })
 }
 
