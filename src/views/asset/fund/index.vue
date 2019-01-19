@@ -79,7 +79,7 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
-      temp: {
+      dataForm: {
         id: undefined,
         fundCode: '',
         confirmedDate: '',
@@ -137,7 +137,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           debugger
-          createFundInvestmentTradeLog(this.temp).then(() => {
+          createFundInvestmentTradeLog(this.dataForm).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',

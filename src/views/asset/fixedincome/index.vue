@@ -144,7 +144,7 @@ export default {
         create: 'Create'
       },
       receivePaymentTypeOptions,
-      temp: {
+      dataForm: {
         id: undefined,
         productName: '',
         capital: '',
@@ -201,7 +201,7 @@ export default {
     createData: function() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createFixedIncomeRecord(this.temp).then(() => {
+          createFixedIncomeRecord(this.dataForm).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -218,7 +218,7 @@ export default {
     updateData: function() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateFixedIncomeRecord(this.temp).then(() => {
+          updateFixedIncomeRecord(this.dataForm).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',

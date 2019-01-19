@@ -4,7 +4,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> {{ message }}
     </div>
     <custom-table :table-data="tableData" :table-meta="tableMeta" :expand-form-meta="expandFormMeta" @edit="handleUpdate" @delete="handleDelete"/>
-    <form-dialog :form-status="dialogStatus" :is-visible="dialogFormVisible" :data-form="temp" :form-meta="formMeta" @create="createData" @update="updateData"/>
+    <form-dialog :form-status="dialogStatus" :data-form="dataForm" :form-meta="formMeta" @create="createData" @update="updateData"/>
   </div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
         { prop: 'boughtChannel', label: '购买渠道', widthStyle: '180' }
       ],
       tableData: [],
-      temp: {
+      dataForm: {
         id: undefined,
         member: '',
         type: '',
@@ -99,14 +99,13 @@ export default {
     getTableData: function() {
       return new Promise((resolve) => {
         listAllGuaranteeSlips().then(data => {
-          console.log(data)
           this.tableData = data.data
           resolve()
         })
       })
     },
     resetDataForm() {
-      this.temp = {
+      this.dataForm = {
         id: undefined,
         member: '',
         type: '',
@@ -124,21 +123,17 @@ export default {
     },
 
     createData: function() {
-      createGuaranteeSlip(this.temp).then(() => {
+      createGuaranteeSlip(this.dataForm).then(() => {
         this.handleSuccess('创建成功')
         this.getTableData()
       })
     },
 
     updateData: function() {
-      updateGuaranteeSlip(this.temp).then(() => {
+      updateGuaranteeSlip(this.dataForm).then(() => {
         this.handleSuccess('更新成功')
         this.getTableData()
       })
-    },
-
-    getDetail: function(row) {
-      console.log('getDetail')
     },
 
     handleDelete: function(row) {
@@ -149,6 +144,12 @@ export default {
           resolve()
         })
       })
+    },
+
+    formatterInsuranceType: function(row, column) {
+      if (row[column.property]) {
+        return insuranceTypeMap[row[column.property]]
+      }
     }
   }
 }

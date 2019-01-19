@@ -1,22 +1,19 @@
-
 export default {
   data() {
     return {
-      dialogFormVisible: false,
       dialogStatus: ''
     }
   },
-
   methods: {
     handleCreate: function() {
+      debugger
       this.resetDataForm()
-      this.message = this.message.split('').reverse().join('')
       this.dialogStatus = 'create'
-      this.dialogFormVisible = true
+      this.$store.dispatch('table/setVisible', true)
     },
 
     handleSuccess: function(message) {
-      this.dialogFormVisible = false
+      this.$store.dispatch('table/setVisible', false)
       this.$notify({
         title: '成功',
         message: message,
@@ -26,9 +23,10 @@ export default {
     },
 
     handleUpdate: function(row) {
+      debugger
       this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.temp = Object.assign({}, row) // copy obj
+      this.dataForm = Object.assign({}, row) // copy obj
+      this.$store.dispatch('table/setVisible', true)
     }
 
   }

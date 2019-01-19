@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="textMap[formStatus]" :visible.sync="isVisible">
+    <el-dialog :title="textMap[formStatus]" :visible.sync="visible">
       <el-form ref="dataForm" :rules="formMeta.rules" :model="dataForm" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item v-for="(item) of formMeta.items" :key="item.prop" :label="item.label" :prop="item.prop">
           <el-input
@@ -73,7 +73,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="isVisible = false">{{ $t('table.cancel') }}</el-button>
+        <el-button @click="handleCancel">{{ $t('table.cancel') }}</el-button>
         <el-button type="primary" @click="handleClick">{{ $t('table.confirm') }}</el-button>
       </div>
     </el-dialog>
@@ -81,16 +81,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'FormDialog',
   props: {
     formStatus: {
       type: String,
       required: true
-    },
-    isVisible: {
-      type: Boolean,
-      default: false
     },
     dataForm: {
       type: Object,
@@ -109,6 +107,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      visible: state => state.table.visible
+    })
+  },
   methods: {
     handleClick: function() {
       debugger
@@ -117,6 +120,9 @@ export default {
           this.$emit(this.formStatus)
         }
       })
+    },
+    handleCancel: function() {
+      this.$store.dispatch('table/setVisible', false)
     }
   }
 }

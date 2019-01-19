@@ -92,7 +92,7 @@ export default {
         create: 'Create'
       },
       receivedStatus,
-      temp: {
+      dataForm: {
         id: undefined,
         capital: '',
         interest: '',
