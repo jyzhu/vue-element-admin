@@ -116,7 +116,7 @@ export default {
         })
       })
     },
-    resetTemp() {
+    resetDataForm() {
       this.temp = {
         id: undefined,
         fundCode: '',
@@ -127,7 +127,7 @@ export default {
       }
     },
     handleCreate: function() {
-      this.resetTemp()
+      this.resetDataForm()
       this.message = this.message.split('').reverse().join('')
       this.dialogStatus = 'create'
       this.dialogFormVisible = true

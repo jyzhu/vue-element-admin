@@ -13,22 +13,22 @@
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="产品名称">
-              <span>{{ props.row.productName }}</span>
+              <span>{{ props.row['productName'] }}</span>
             </el-form-item>
             <el-form-item label="申购日期">
-              <span>{{ props.row.boughtDate }}</span>
+              <span>{{ props.row['boughtDate'] }}</span>
             </el-form-item>
             <el-form-item label="起息日期">
-              <span>{{ props.row.effectiveDate }}</span>
+              <span>{{ props.row['effectiveDate'] }}</span>
             </el-form-item>
             <el-form-item label="结束日期">
-              <span>{{ props.row.endDate }}</span>
+              <span>{{ props.row['endDate'] }}</span>
             </el-form-item>
             <el-form-item label="期限">
-              <span>{{ props.row.term }}</span>
+              <span>{{ props.row['term'] }}</span>
             </el-form-item>
             <el-form-item label="待收利息">
-              <span>{{ props.row.unreceivedInterest }}</span>
+              <span>{{ props.row['unreceivedInterest'] }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -177,7 +177,7 @@ export default {
         })
       })
     },
-    resetTemp() {
+    resetDataForm() {
       this.temp = {
         id: undefined,
         productName: '',
@@ -192,7 +192,7 @@ export default {
       }
     },
     handleCreate: function() {
-      this.resetTemp()
+      this.resetDataForm()
       this.message = this.message.split('').reverse().join('')
       this.dialogStatus = 'create'
       this.dialogFormVisible = true

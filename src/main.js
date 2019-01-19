@@ -19,6 +19,8 @@ import './errorLog' // error log
 import './permission' // permission control
 import './mock' // simulation data
 
+import _ from 'lodash'
+
 import * as filters from './filters' // global filters
 
 Vue.use(Element, {
@@ -30,6 +32,8 @@ Vue.use(Element, {
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+
+Vue.prototype._ = _
 
 Vue.config.productionTip = false
 

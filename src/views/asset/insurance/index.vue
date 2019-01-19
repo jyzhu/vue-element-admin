@@ -3,106 +3,92 @@
     <div class="filter-container">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> {{ message }}
     </div>
-    <custom-table :table-data="tableData" :table-meta="tableMeta"/>
-    <el-table
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column
-        prop="id"
-        label="序号"
-        width="50" />
-      <el-table-column
-        prop="tradeDate"
-        label="日期"
-        width="180" />
-      <el-table-column
-        prop="name"
-        label="姓名"
-        width="180" />
-      <el-table-column
-        prop="address"
-        label="地址" />
-      <el-table-column
-        label="操作" >
-        <template slot-scope="scope">
-          <el-button @click="handleUpdate(scope.row)" >编辑</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="temp.name" />
-        </el-form-item>
-        <el-form-item label="日期" prop="tradeDate">
-          <el-date-picker v-model="temp.tradeDate" type="date" placeholder="Please pick a date"/>
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="temp.address" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">{{ $t('table.cancel') }}</el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">{{ $t('table.confirm') }}</el-button>
-      </div>
-    </el-dialog>
-
+    <custom-table :table-data="tableData" :table-meta="tableMeta" :expand-form-meta="expandFormMeta" @edit="handleUpdate" @delete="handleDelete"/>
+    <form-dialog :form-status="dialogStatus" :is-visible="dialogFormVisible" :data-form="temp" :form-meta="formMeta" @create="createData" @update="updateData"/>
   </div>
 </template>
 
 <script>
-import { getTradeLog, createTradeLog, updateTradeLog } from '@/api/financing'
+import { listAllGuaranteeSlips, createGuaranteeSlip, updateGuaranteeSlip, deleteGuaranteeSlip } from '@/api/insurance'
+import CustomTableMixin from '@/components/table/mixins/CustomTableMixin'
 import CustomTable from '@/components/table/CustomTable'
+import FormDialog from './components/FormDialog'
+
+export const insuranceTypeMap = {
+  YIWAI: '意外险',
+  ZHONGJI: '重疾险',
+  YILIAO: '医疗险',
+  SHOUXIAN: '寿险',
+  CAICHAN: '财产险',
+  CHEXIAN: '车险'
+}
 
 export default {
-  components: { CustomTable },
+  components: { CustomTable, FormDialog },
+  mixins: [CustomTableMixin],
   data() {
     return {
       message: 'Hello Vue.js!',
-      // tableData: [{
-      //   id: 1,
-      //   date: '2016-05-02',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1518 弄'
-      // }, {
-      //   id: 2,
-      //   date: '2016-05-04',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1517 弄'
-      // }, {
-      //   id: 3,
-      //   date: '2016-05-01',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1519 弄'
-      // }, {
-      //   id: 4,
-      //   date: '2016-05-03',
-      //   name: '王小虎',
-      //   address: '上海市普陀区金沙江路 1516 弄'
-      // }],
       tableMeta: [
         { prop: 'id', label: '序号', widthStyle: '50' },
-        { prop: 'tradeDate', label: '日期', widthStyle: '180' },
-        { prop: 'name', label: '姓名', widthStyle: '180' },
-        { prop: 'address', label: '地址', widthStyle: '250' }
+        { prop: 'member', label: '成员', widthStyle: '100' },
+        { prop: 'type', label: '险种', widthStyle: '80', formatter: function(row, column) { return insuranceTypeMap[row[column.property]] } },
+        { prop: 'productName', label: '保险名称', widthStyle: '180' },
+        { prop: 'premium', label: '保险缴费', widthStyle: '80' },
+        { prop: 'paymentPeriod', label: '缴费期限', widthStyle: '80' },
+        { prop: 'guaranteeYear', label: '保障年限', widthStyle: '80' },
+        { prop: 'effective', label: '是否生效', widthStyle: '80' },
+        { prop: 'boughtDate', label: '购买时间', widthStyle: '120' }
+      ],
+      expandFormMeta: [
+        { prop: 'guaranteeSlipNo', label: '保单号', widthStyle: '180' },
+        { prop: 'guaranteeContent', label: '保额', widthStyle: '180' },
+        { prop: 'company', label: '保险公司', widthStyle: '180' },
+        { prop: 'boughtChannel', label: '购买渠道', widthStyle: '180' }
       ],
       tableData: [],
-      dialogFormVisible: false,
-      dialogStatus: '',
-      textMap: {
-        update: 'Edit',
-        create: 'Create'
-      },
       temp: {
         id: undefined,
-        tradeDate: '',
-        name: '',
-        address: ''
+        member: '',
+        type: '',
+        productName: '',
+        premium: '',
+        paymentPeriod: '',
+        guaranteeYear: '',
+        effective: '',
+        boughtDate: '',
+        guaranteeSlipNo: '',
+        guaranteeContent: '',
+        company: '',
+        boughtChannel: ''
       },
-      rules: {
-        name: [{ required: true, message: 'name is required', trigger: 'blur' }],
-        tradeDate: [{ type: 'date', required: true, message: 'trade date is required', trigger: 'change' }]
+      formMeta: {
+        rules: {
+          productName: [{ required: true, message: 'name is required', trigger: 'blur' }],
+          member: [{ required: true, message: 'member is required', trigger: 'blur' }]
+        },
+        items: [
+          { type: 'string', prop: 'member', label: '成员' },
+          { type: 'select', prop: 'type', label: '险种',
+            options: [
+              { value: 'YIWAI', label: insuranceTypeMap['YIWAI'] },
+              { value: 'ZHONGJI', label: insuranceTypeMap['ZHONGJI'] },
+              { value: 'YILIAO', label: insuranceTypeMap['YILIAO'] },
+              { value: 'SHOUXIAN', label: insuranceTypeMap['SHOUXIAN'] },
+              { value: 'CAICHAN', label: insuranceTypeMap['CAICHAN'] },
+              { value: 'CHEXIAN', label: insuranceTypeMap['CHEXIAN'] }
+            ] },
+          { type: 'string', prop: 'productName', label: '保险名称' },
+          { type: 'double', prop: 'premium', label: '保险缴费', range: { max: 999999.99, min: 0.01, precision: 2 }},
+          { type: 'int', prop: 'paymentPeriod', label: '缴费期限', range: { max: 40, min: 1 }},
+          { type: 'string', prop: 'guaranteeYear', label: '保障年限' },
+          { type: 'switch', prop: 'effective', label: '是否生效' },
+          { type: 'date', prop: 'boughtDate', label: '购买时间' },
+          { type: 'string', prop: 'guaranteeSlipNo', label: '保单号' },
+          { type: 'textarea', prop: 'guaranteeContent', label: '保额' },
+          { type: 'string', prop: 'company', label: '保险公司' },
+          { type: 'string', prop: 'boughtChannel', label: '购买渠道' }
+        ]
       }
     }
   },
@@ -112,64 +98,57 @@ export default {
   methods: {
     getTableData: function() {
       return new Promise((resolve) => {
-        getTradeLog().then(data => {
+        listAllGuaranteeSlips().then(data => {
           console.log(data)
           this.tableData = data.data
           resolve()
         })
       })
     },
-    resetTemp() {
+    resetDataForm() {
       this.temp = {
         id: undefined,
-        tradeDate: '',
-        name: '',
-        address: ''
+        member: '',
+        type: '',
+        productName: '',
+        premium: '',
+        paymentPeriod: '',
+        guaranteeYear: '',
+        effective: '',
+        boughtDate: '',
+        guaranteeSlipNo: '',
+        guaranteeContent: '',
+        company: '',
+        boughtChannel: ''
       }
-    },
-    handleCreate: function() {
-      this.resetTemp()
-      this.message = this.message.split('').reverse().join('')
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
     },
 
     createData: function() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          createTradeLog(this.temp).then(() => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
+      createGuaranteeSlip(this.temp).then(() => {
+        this.handleSuccess('创建成功')
+        this.getTableData()
       })
     },
 
     updateData: function() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          updateTradeLog(this.temp).then(() => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
+      updateGuaranteeSlip(this.temp).then(() => {
+        this.handleSuccess('更新成功')
+        this.getTableData()
       })
     },
 
-    handleUpdate: function(row) {
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.temp = Object.assign({}, row) // copy obj
+    getDetail: function(row) {
+      console.log('getDetail')
+    },
+
+    handleDelete: function(row) {
+      return new Promise((resolve) => {
+        deleteGuaranteeSlip(row.id).then(data => {
+          debugger
+          this.getTableData()
+          resolve()
+        })
+      })
     }
   }
 }
