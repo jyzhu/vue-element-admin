@@ -13,15 +13,7 @@ import { listAllGuaranteeSlips, createGuaranteeSlip, updateGuaranteeSlip, delete
 import CustomTableMixin from '@/components/table/mixins/CustomTableMixin'
 import CustomTable from '@/components/table/CustomTable'
 import FormDialog from './components/FormDialog'
-
-export const insuranceTypeMap = {
-  YIWAI: '意外险',
-  ZHONGJI: '重疾险',
-  YILIAO: '医疗险',
-  SHOUXIAN: '寿险',
-  CAICHAN: '财产险',
-  CHEXIAN: '车险'
-}
+import { insuranceTypeMap, formatterCollections } from '@/utils/formatter'
 
 export default {
   components: { CustomTable, FormDialog },
@@ -32,7 +24,7 @@ export default {
       tableMeta: [
         { prop: 'id', label: '序号', widthStyle: '50' },
         { prop: 'member', label: '成员', widthStyle: '100' },
-        { prop: 'type', label: '险种', widthStyle: '80', formatter: function(row, column) { return insuranceTypeMap[row[column.property]] } },
+        { prop: 'type', label: '险种', widthStyle: '80', formatter: formatterCollections.formatterInsuranceType },
         { prop: 'productName', label: '保险名称', widthStyle: '180' },
         { prop: 'premium', label: '保险缴费', widthStyle: '80' },
         { prop: 'paymentPeriod', label: '缴费期限', widthStyle: '80' },
@@ -96,14 +88,6 @@ export default {
     this.getTableData()
   },
   methods: {
-    getTableData: function() {
-      return new Promise((resolve) => {
-        listAllGuaranteeSlips().then(data => {
-          this.tableData = data.data
-          resolve()
-        })
-      })
-    },
     resetDataForm() {
       this.dataForm = {
         id: undefined,
@@ -120,6 +104,15 @@ export default {
         company: '',
         boughtChannel: ''
       }
+    },
+
+    getTableData: function() {
+      return new Promise((resolve) => {
+        listAllGuaranteeSlips().then(data => {
+          this.tableData = data.data
+          resolve()
+        })
+      })
     },
 
     createData: function() {

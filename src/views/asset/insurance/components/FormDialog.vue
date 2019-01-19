@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="textMap[formStatus]" :visible.sync="visible">
+    <el-dialog :title="textMap[formStatus]" :visible.sync="visible" @close="handleClose">
       <el-form ref="dataForm" :rules="formMeta.rules" :model="dataForm" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item v-for="(item) of formMeta.items" :key="item.prop" :label="item.label" :prop="item.prop">
           <el-input
@@ -110,7 +110,15 @@ export default {
   computed: {
     ...mapState({
       visible: state => state.table.visible
-    })
+    }),
+    visible: {
+      get: function() {
+        return this.$store.state.table.visible
+      },
+      set: function(v) {
+        this.$store.dispatch('table/setVisible', v)
+      }
+    }
   },
   methods: {
     handleClick: function() {
@@ -120,6 +128,9 @@ export default {
           this.$emit(this.formStatus)
         }
       })
+    },
+    handleClose: function() {
+      this.$store.dispatch('table/setVisible', false)
     },
     handleCancel: function() {
       this.$store.dispatch('table/setVisible', false)
