@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button> {{ message }}
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加</el-button>
     </div>
     <custom-table :table-data="tableData" :table-meta="tableMeta" :expand-form-meta="expandFormMeta" @edit="handleUpdate" @delete="handleDelete"/>
     <form-dialog :form-status="dialogStatus" :data-form="dataForm" :form-meta="formMeta" @create="createData" @update="updateData"/>
@@ -12,7 +12,7 @@
 import { listAllGuaranteeSlips, createGuaranteeSlip, updateGuaranteeSlip, deleteGuaranteeSlip } from '@/api/insurance'
 import CustomTableMixin from '@/components/table/mixins/CustomTableMixin'
 import CustomTable from '@/components/table/CustomTable'
-import FormDialog from './components/FormDialog'
+import FormDialog from '@/components/table/FormDialog'
 import { insuranceTypeMap, formatterCollections } from '@/utils/formatter'
 
 export default {
@@ -20,7 +20,6 @@ export default {
   mixins: [CustomTableMixin],
   data() {
     return {
-      message: 'Hello Vue.js!',
       tableMeta: [
         { prop: 'id', label: '序号', widthStyle: '50' },
         { prop: 'member', label: '成员', widthStyle: '100' },
@@ -89,6 +88,7 @@ export default {
   },
   methods: {
     resetDataForm() {
+      debugger
       this.dataForm = {
         id: undefined,
         member: '',
@@ -137,12 +137,6 @@ export default {
           resolve()
         })
       })
-    },
-
-    formatterInsuranceType: function(row, column) {
-      if (row[column.property]) {
-        return insuranceTypeMap[row[column.property]]
-      }
     }
   }
 }

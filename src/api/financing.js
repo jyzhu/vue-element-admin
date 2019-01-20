@@ -43,6 +43,13 @@ export function listReceivedPaymentDetails(id) {
     method: 'get'
   })
 }
+export function updateReceivedPaymentTradeLog(data) {
+  return request({
+    url: '/fixedincome/receivedPayment',
+    method: 'post',
+    data
+  })
+}
 
 export function deleteReceivedPaymentTradeLog(id) {
   return request({

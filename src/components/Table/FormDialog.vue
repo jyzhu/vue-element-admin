@@ -37,13 +37,11 @@
           <el-date-picker
             v-if="item.type === 'year' || item.type === 'month' || item.type === 'week' || item.type === 'dates' || item.type === 'date' || item.type === 'datetime' "
             v-model="dataForm[item.prop]"
-            :type="item.type"
-            :format="item.format"/>
+            :type="item.type"/>
           <el-date-picker
             v-else-if="item.type === 'datetimerange' || item.type === 'daterange'"
             v-model="dataForm[item.prop]"
             :type="item.type"
-            :format="item.format"
             :default-time="['00:00:00', '23:59:59']"/>
           <el-radio-group
             v-else-if="item.type === 'enum'"
@@ -123,11 +121,15 @@ export default {
   methods: {
     handleClick: function() {
       debugger
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.$emit(this.formStatus)
-        }
-      })
+      if (this._.isEmpty(this.$refs['dataForm'].rules)) {
+        this.$emit(this.formStatus)
+      } else {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            this.$emit(this.formStatus)
+          }
+        })
+      }
     },
     handleClose: function() {
       this.$store.dispatch('table/setVisible', false)
