@@ -49,7 +49,7 @@ export default {
           productName: [{ required: true, message: 'name is required', trigger: 'blur' }],
           capital: [{ required: true, message: 'capital is required', trigger: 'blur' }],
           interestRate: [{ required: true, message: 'interest rate is required', trigger: 'blur' }],
-          // effectiveDate: [{ type: 'date', required: true, message: 'effective date is required', trigger: 'change' }],
+          effectiveDate: [{ type: 'date', required: true, message: 'effective date is required', trigger: 'change' }],
           term: [{ required: true, message: 'term is required', trigger: 'blur' }]
         },
         items: [
@@ -132,10 +132,8 @@ export default {
     },
 
     handleDelete: function(row) {
-      this.message = this.message.split('').reverse().join('')
       return new Promise((resolve) => {
         deleteFixedIncomeRecord(row.id).then(data => {
-          debugger
           this.getTableData()
           resolve()
         })

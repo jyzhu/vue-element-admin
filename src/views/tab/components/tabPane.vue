@@ -21,7 +21,7 @@
     <el-table-column min-width="300px" label="Title">
       <template slot-scope="scope">
         <span>{{ scope.row.title }}</span>
-        <el-tag>{{ scope.row.type }}</el-tag>
+        <el-tag>{{ item.type }}</el-tag>
       </template>
     </el-table-column>
 

@@ -111,6 +111,30 @@ export function createFundInvestmentTradeLog(data) {
   })
 }
 
+export function updateFundInvestmentTradeLog(data) {
+  debugger
+  return request({
+    url: '/fund/investmentRecord/trade/update',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteFundInvestmentTradeLog(id) {
+  debugger
+  return request({
+    url: '/fund/investmentRecord/trade/' + id,
+    method: 'delete'
+  })
+}
+
+export function getFundInvestmentRecord(id) {
+  return request({
+    url: '/fund/investmentRecord/' + id,
+    method: 'get'
+  })
+}
+
 export function loginByUsername(username, password) {
   debugger
   const data = {

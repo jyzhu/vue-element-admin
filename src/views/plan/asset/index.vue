@@ -32,7 +32,7 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       dialogStatus: '',
-      temp: {
+      dataForm: {
         id: undefined,
         tradeDate: '',
         name: '',
@@ -80,7 +80,7 @@ export default {
     },
 
     createData: function() {
-      createTradeLog(this.temp).then(() => {
+      createTradeLog(this.dataForm).then(() => {
         this.dialogFormVisible = false
         this.$notify({
           title: '成功',
@@ -92,7 +92,7 @@ export default {
     },
 
     updateData: function() {
-      updateTradeLog(this.temp).then(() => {
+      updateTradeLog(this.dataForm).then(() => {
         this.dialogFormVisible = false
         this.$notify({
           title: '成功',

@@ -39,7 +39,7 @@
       <el-table-column :label="$t('table.title')" min-width="150px">
         <template slot-scope="scope">
           <span class="link-type" @click="handleUpdate(scope.row)">{{ scope.row.title }}</span>
-          <el-tag>{{ scope.row.type | typeFilter }}</el-tag>
+          <el-tag>{{ item.type | typeFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="$t('table.author')" width="110px" align="center">
@@ -182,7 +182,7 @@ export default {
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
-      temp: {
+      dataForm: {
         id: undefined,
         importance: 1,
         remark: '',
@@ -248,7 +248,7 @@ export default {
       }
       this.handleFilter()
     },
-    resetTemp() {
+    resetDataForm() {
       this.temp = {
         id: undefined,
         importance: 1,
@@ -260,7 +260,7 @@ export default {
       }
     },
     handleCreate() {
-      this.resetTemp()
+      this.resetDataForm()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -270,10 +270,10 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          this.dataForm.id = parseInt(Math.random() * 100) + 1024 // mock a id
+          this.dataForm.author = 'vue-element-admin'
+          createArticle(this.dataForm).then(() => {
+            this.list.unshift(this.dataForm)
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -287,7 +287,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.dataForm.timestamp = new Date(this.dataForm.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -297,13 +297,13 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
+          const tempData = Object.assign({}, this.dataForm)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateArticle(tempData).then(() => {
             for (const v of this.list) {
-              if (v.id === this.temp.id) {
+              if (v.id === this.dataForm.id) {
                 const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
+                this.list.splice(index, 1, this.dataForm)
                 break
               }
             }

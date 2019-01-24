@@ -3,9 +3,14 @@
     <el-dialog :title="textMap[formStatus]" :visible.sync="visible" @close="handleClose">
       <el-form ref="dataForm" :rules="formMeta.rules" :model="dataForm" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item v-for="(item) of formMeta.items" :key="item.prop" :label="item.label" :prop="item.prop">
+          <span v-if="item.type === 'label'">{{ dataForm[item.prop] }} </span>
           <el-input
             v-if="item.type === 'string'"
             v-model="dataForm[item.prop]"/>
+          <el-input
+            v-if="item.type === 'hidden'"
+            v-model="dataForm[item.prop]"
+            type="hidden"/>
           <el-input
             v-if="item.type === 'textarea'"
             v-model="dataForm[item.prop]"
@@ -68,6 +73,9 @@
               :label="option.label"
               :value="option.value" />
           </el-select>
+          <fund-code
+            v-else-if="item.type === 'FundCode'"
+            :data-form="dataForm"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -80,9 +88,11 @@
 
 <script>
 import { mapState } from 'vuex'
+import FundCode from './components/FundCode'
 
 export default {
   name: 'FormDialog',
+  components: { FundCode },
   props: {
     formStatus: {
       type: String,

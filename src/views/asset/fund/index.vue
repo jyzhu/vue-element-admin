@@ -37,7 +37,7 @@ export default {
           confirmedDate: [{ type: 'date', required: true, message: 'confirmed date is required', trigger: 'change' }]
         },
         items: [
-          { type: 'select', prop: 'fundCode', label: '基金代码', options: this.fundOptions },
+          { type: 'FundCode', prop: 'fundCode', label: '基金代码', options: this.fundOptions },
           { type: 'date', prop: 'confirmedDate', label: '确认日期' },
           { type: 'string', prop: 'netValue', label: '申购净值' },
           { type: 'double', prop: 'costRate', label: '申购费率', range: { max: 1.0000, min: 0.0001, precision: 5 }},
@@ -77,7 +77,7 @@ export default {
       debugger
       return new Promise((resolve) => {
         listAllFunds().then(data => {
-          return data.data
+          data.data
           // resolve()
         })
       })
